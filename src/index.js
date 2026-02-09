@@ -11,6 +11,11 @@ app.get('/', (req, res) => {
 })
 
 
+import matchesRoutes from './routes/matches.routes.js'
+
+app.use('/api/matches', matchesRoutes)
+
+
 app.listen(process.env.PORT || 9000, (err) => {
 if(err) return
 console.log(`server is running at ${process.env.PORT}`);
