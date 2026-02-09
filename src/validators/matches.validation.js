@@ -8,8 +8,8 @@ export const createMatchSchema = z
     homeTeam: z.string().trim().min(1),
     awayTeam: z.string().trim().min(1),
     status: statusEnum.optional(),
-    startTime: z.coerce.date().optional(),
-    endTime: z.coerce.date().optional(),
+    startTime: z.iso.datetime(),
+    endTime: z.iso.datetime(),
     homeScore: z.coerce.number().int().min(0).optional(),
     awayScore: z.coerce.number().int().min(0).optional(),
   })
