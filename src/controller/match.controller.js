@@ -6,16 +6,20 @@ import { desc } from "drizzle-orm"
 
 
 const createMatch = async (req, res) => {
+
     const parsed = createMatchSchema.safeParse(req.body)
 
     if (!parsed.success) {
-        return res.status(400).json({ error: "Invalid payload", details: parsed.error.issues })
+        return res.status(400).json({
+            error: "Invalid payload",
+            details: parsed.error.issues
+        })
     }
 
-    const { data: { startTime, endTime, homeScore, awayScore } } = parsed
-
+    const { startTime, endTime, homeScore, awayScore } = parsed.data
 
     try {
+
         const [event] = await db.insert(matches).values({
             ...parsed.data,
             startTime: new Date(startTime),
@@ -23,18 +27,22 @@ const createMatch = async (req, res) => {
             homeScore: homeScore ?? 0,
             awayScore: awayScore ?? 0,
             status: getMatchStatus(startTime, endTime)
+        }).returning()
 
+        if (req.app.locals.broadcastMatchCreated) {
+            req.app.locals.broadcastMatchCreated(event)
+        }
 
-        }).returning();
-
-        res.status(201).json({
-            data: event
-        })
+        res.status(201).json({ data: event })
 
     } catch (error) {
-        res.status(500).json({ error: "failed to create a match", details: JSON.stringify(error) })
+        res.status(500).json({
+            error: "Failed to create match",
+            details: error.message
+        })
     }
 }
+
 
 const getMatches = async (req, res) => {
     const parsed = listMatchesQuerySchema.safeParse(req.query)
@@ -60,3 +68,5 @@ const getMatches = async (req, res) => {
     }
 }
 export { createMatch, getMatches }
+
+
