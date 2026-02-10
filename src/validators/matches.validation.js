@@ -19,12 +19,16 @@ export const createMatchSchema = z
   })
 
 
-  export const updateScoreSchema = z.object({
-    homeScore: z.coerce.number().int().nonnegative(),
-    awayScore: z.coerce.number().int().nonnegative(),
-  })
+export const updateScoreSchema = z.object({
+  homeScore: z.coerce.number().int().nonnegative(),
+  awayScore: z.coerce.number().int().nonnegative(),
+})
 
-  export const listMatchesQuerySchema = z.object({
-    limit: z.coerce.number().int().positive().max(100).optional()
-  })
+export const listMatchesQuerySchema = z.object({
+  limit: z.coerce.number().int().positive().max(100).optional()
+})
+
+export const matchIdParamSchema = z.object({
+  id: z.coerce.number().int().positive()
+})
 

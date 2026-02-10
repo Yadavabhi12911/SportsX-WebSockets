@@ -14,8 +14,10 @@ app.get('/', (req, res) => {
 
 
 import matchesRoutes from './routes/matches.routes.js'
+import commentaryRoutes from './routes/commentary.routes.js'
 
 app.use('/api/matches', matchesRoutes)
+app.use('/api/matches/:id/commentary', commentaryRoutes)
 
 
 // web socket
