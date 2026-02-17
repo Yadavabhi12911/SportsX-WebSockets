@@ -23,8 +23,9 @@ app.use('/api/matches/:id/commentary', commentaryRoutes)
 // web socket
 import { attackWebSocketServer } from './ws/server.js'
 
-const { broadcastMatchCreated } = attackWebSocketServer(server)
+const { broadcastMatchCreated, broadcastCommentry } = attackWebSocketServer(server)
 app.locals.broadcastMatchCreated = broadcastMatchCreated
+app.locals.broadcastCommentry = broadcastCommentry
 
 server.listen(process.env.PORT, process.env.HOST || 9000, (err) => {
     if (err) return
