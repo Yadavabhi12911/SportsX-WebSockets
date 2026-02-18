@@ -11,9 +11,15 @@ router.post("/", async (req, res) => {
     try {
         // Validate request parameters (match ID)
         const params = matchIdParamSchema.safeParse(req.params);
-
-        // Validate request body (commentary entries)
         const body = createCommentarySchema.safeParse(req.body);
+
+        if (!params.success) {
+            return res.status(400).json({ success: false, errors: params.error.issues });
+        }
+
+        if (!body.success) {
+            return res.status(400).json({ success: false, errors: body.error.issues });
+        }
 
         const { minutes, ...rest } = body.data
         const [result] = await db.insert(commentary).values({
@@ -22,9 +28,18 @@ router.post("/", async (req, res) => {
             ...rest,
         }).returning();
 
+        // Broadcast new commentary to subscribed websocket clients (if websocket server attached)
+        if (req.app?.locals?.broadcastCommentry) {
+            try {
+                req.app.locals.broadcastCommentry(params.data.id, result)
+            } catch (err) {
+                console.error('Failed to broadcast commentary:', err)
+            }
+        }
+
         res.status(201).json({
             success: true,
-            data: result[0],
+            data: result,
         });
     } catch (error) {
         if (error.name === "ZodError") {

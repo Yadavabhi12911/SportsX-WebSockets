@@ -38,14 +38,14 @@ function handleMessage(socket, data) {
         sendJson(socket, { type: 'error', message: "Invalid Json" })
     }
 
-    if (message?.type === subscribe && Number.isInteger(message.matchId)) {
+    if (message?.type === "subscribe" && Number.isInteger(message.matchId)) {
         subscribe(message.matchId, socket)
         socket.subscription.add(message.matchId)
 
         sendJson(socket, { type: "subscribed", matchId: message.matchId })
         return
     }
-    if (message?.type === unSubscribe && Number.isInteger(message.matchId)) {
+    if (message?.type === "unSubscribe" && Number.isInteger(message.matchId)) {
         unSubscribe(message.matchId, socket)
         socket.subscription.delete(message.matchId)
 
@@ -128,7 +128,7 @@ export function attackWebSocketServer(server) {
     }
 
     function broadcastCommentry(matchId, comment){
-        broadcastCommentry(matchId, {type:'commentary', data:comment})
+        broadcastToMatch(matchId, { type: 'commentary', data: comment })
     }
 
 
